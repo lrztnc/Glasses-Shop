@@ -58,3 +58,55 @@ public class ShopManager : MonoBehaviour
         cartItems.Add(productName);
         Debug.Log(productName + " aggiunto al carrello.");
     }
+
+    void OnSearchChanged(string searchText)
+    {
+        searchText = searchText.Trim().ToLower();
+
+        foreach (GameObject obj in productObjects)
+        {
+            obj.SetActive(false);
+        }
+
+        if (string.IsNullOrEmpty(searchText))
+        {
+            foreach (GameObject obj in productObjects)
+            {
+                obj.SetActive(true);
+                obj.transform.SetSiblingIndex(obj.transform.GetSiblingIndex());
+            }
+            return;
+        }
+
+        List<GameObject> matches = new List<GameObject>();
+
+        foreach (GameObject obj in productObjects)
+        {
+            Transform titleTransform = obj.transform.Find(obj.name + "Title");
+            if (titleTransform != null)
+            {
+                string titleText = titleTransform.GetComponent<Text>().text.ToLower();
+                if (titleText.Contains(searchText))
+                {
+                    matches.Add(obj);
+                }
+            }
+        }
+
+        int index = 0;
+        foreach (GameObject match in matches)
+        {
+            match.SetActive(true);
+            match.transform.SetSiblingIndex(index++);
+        }
+
+        foreach (GameObject obj in productObjects)
+        {
+            if (!matches.Contains(obj))
+            {
+                obj.SetActive(true);
+                obj.transform.SetSiblingIndex(index++);
+            }
+        }
+    }
+}
