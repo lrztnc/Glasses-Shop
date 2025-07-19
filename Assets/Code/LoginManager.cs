@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
+using System.Linq;
 
 public class LoginManager : MonoBehaviour
 {
@@ -24,10 +26,10 @@ public class LoginManager : MonoBehaviour
         string enteredEmail = loginEmailField.text.Trim();
         string enteredPassword = loginPasswordField.text.Trim();
 
-        string savedEmail = PlayerPrefs.GetString("email", "");
-        string savedPassword = PlayerPrefs.GetString("password", "");
+        List<UserData> users = LoadUsers();
+        bool isValid = users.Any(u => u.Email == enteredEmail && u.Password == enteredPassword);
 
-        if (enteredEmail == savedEmail && enteredPassword == savedPassword)
+        if (isValid)
         {
             Debug.Log("Login avvenuto con successo!");
             FindFirstObjectByType<UIManager>().ShowShop();
@@ -37,5 +39,12 @@ public class LoginManager : MonoBehaviour
             if (loginErrorMessage != null)
                 loginErrorMessage.SetActive(true);
         }
+    }
+
+    private List<UserData> LoadUsers()
+    {
+        string json = PlayerPrefs.GetString("users", "");
+        if (string.IsNullOrEmpty(json)) return new List<UserData>();
+        return JsonUtility.FromJson<UserListWrapper>(json).users;
     }
 }

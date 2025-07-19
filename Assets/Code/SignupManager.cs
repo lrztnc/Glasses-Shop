@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
+using System.Linq;
 
 public class SignupManager : MonoBehaviour
 {
@@ -17,10 +19,10 @@ public class SignupManager : MonoBehaviour
 
     void Start()
     {
-        // Configura il campo password per mostrare asterischi
         if (passwordField != null)
         {
             passwordField.contentType = TMP_InputField.ContentType.Password;
+            passwordField.ForceLabelUpdate();
         }
     }
 
@@ -41,19 +43,26 @@ public class SignupManager : MonoBehaviour
             return;
         }
 
-        string savedEmail = PlayerPrefs.GetString("email", "");
-        if (savedEmail == email)
+        List<UserData> users = LoadUsers();
+        if (users.Any(u => u.Email == email))
         {
             if (signupErrorMessage != null)
                 signupErrorMessage.SetActive(true);
             return;
         }
 
-        PlayerPrefs.SetString("email", email);
-        PlayerPrefs.SetString("password", password);
+        users.Add(new UserData(name, surname, email, password));
+        PlayerPrefs.SetString("users", JsonUtility.ToJson(new UserListWrapper(users)));
         PlayerPrefs.Save();
 
         Debug.Log("Registrazione completata!");
         FindFirstObjectByType<UIManager>().ShowLogin();
+    }
+
+    private List<UserData> LoadUsers()
+    {
+        string json = PlayerPrefs.GetString("users", "");
+        if (string.IsNullOrEmpty(json)) return new List<UserData>();
+        return JsonUtility.FromJson<UserListWrapper>(json).users;
     }
 }
