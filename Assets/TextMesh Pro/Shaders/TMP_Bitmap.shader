@@ -1,14 +1,14 @@
-"TextMeshPro/Distance Field Clean" {
+Shader "TextMeshPro/Distance Field Clean" {
 Properties {
-	_MainTex("Font Atlas", 2D) = "white" {}
-	_FaceColor("Face Color", Color) = (1,1,1,1)
-	_OutlineColor("Outline Color", Color) = (0,0,0,1)
-	_OutlineWidth("Outline Thickness", Range(0, 1)) = 0
-	_OutlineSoftness("Outline Softness", Range(0,1)) = 0
-	_FaceDilate("Face Dilate", Range(-1,1)) = 0
-	_GradientScale("Gradient Scale", float) = 5.0
-	_Sharpness("Sharpness", Range(-1,1)) = 0
-	_ScaleRatioA("Scale RatioA", float) = 1
+    _MainTex("Font Atlas", 2D) = "white" {}
+    _FaceColor("Face Color", Color) = (1,1,1,1)
+    _OutlineColor("Outline Color", Color) = (0,0,0,1)
+    _OutlineWidth("Outline Thickness", Range(0, 1)) = 0
+    _OutlineSoftness("Outline Softness", Range(0,1)) = 0
+    _FaceDilate("Face Dilate", Range(-1,1)) = 0
+    _GradientScale("Gradient Scale", float) = 5.0
+    _Sharpness("Sharpness", Range(-1,1)) = 0
+    _ScaleRatioA("Scale RatioA", float) = 1
 }
 
 SubShader {
@@ -79,9 +79,9 @@ SubShader {
 			float softnessFactor = smoothstep(0.0, softness, sd + outline * 0.5);
 
 			fixed4 face = _FaceColor * i.color;
-			fixed4 outline = _OutlineColor * i.color;
+			fixed4 outlineColor = _OutlineColor * i.color; // Rinomina 'outline'
 
-			fixed4 color = lerp(outline, face, softnessFactor);
+			fixed4 color = lerp(outlineColor, face, softnessFactor); // Usa 'outlineColor'
 			color.a *= i.color.a;
 
 			// Elimina riquadri: forza opacità piena
