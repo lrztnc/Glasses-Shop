@@ -1,112 +1,77 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
 
 public class ShopManager : MonoBehaviour
 {
-    [Header("Search")]
-    public TMP_InputField searchInputField;
-
-    [Header("Content Parent")]
-    public Transform contentParent; 
-
-    [Header("Cart Button")]
+    [Header("Search & UI")]
+    public TMP_InputField searchBar;
+    public RectTransform contentParent;
     public Button cartButton;
 
-    [Header("TryOn Buttons")]
-    public Button[] tryOnButtons;
+    [Header("Panels")]
+    public GameObject tryOnPanel;
+    public GameObject shopPanel;
 
-    [Header("Add To Cart Buttons")]
+    [Header("Product References")]
+    public GameObject[] glassesModels;     // Prefab occhiali nel TryOnPanel
+    public Button[] tryOnButtons;          // Bottoni "Try On"
     public Button[] addToCartButtons;
-
-    [Header("Product Containers")]
-    public GameObject[] productObjects; 
-
-    private List<string> cartItems = new List<string>();
+    public GameObject[] productObjects;
 
     void Start()
     {
-        foreach (Button btn in tryOnButtons)
+        // Nasconde TryOnPanel all'avvio
+        if (tryOnPanel != null)
+            tryOnPanel.SetActive(false);
+
+        // Registra i listener dei bottoni Try On
+        for (int i = 0; i < tryOnButtons.Length; i++)
         {
-            btn.onClick.AddListener(() =>
-            {
-                SceneManager.LoadScene("TryOnScene");
-            });
+            int index = i; // Necessario per catturare il valore corretto nel loop
+            tryOnButtons[i].onClick.AddListener(() => OnTryOnButtonClick(index));
         }
-
-        foreach (Button btn in addToCartButtons)
-        {
-            btn.onClick.AddListener(() =>
-            {
-                AddToCart(btn.transform.parent.name);
-            });
-        }
-
-        cartButton.onClick.AddListener(() =>
-        {
-            PlayerPrefs.SetString("CartItems", string.Join(",", cartItems));
-            SceneManager.LoadScene("CartScene");
-        });
-
-        searchInputField.onValueChanged.AddListener(OnSearchChanged);
     }
 
-    void AddToCart(string productName)
+    public void OnTryOnButtonClick(int glassesIndex)
     {
-        cartItems.Add(productName);
-        Debug.Log(productName + " aggiunto al carrello.");
+        // Mostra il pannello Try-On
+        if (tryOnPanel != null)
+            tryOnPanel.SetActive(true);
+
+        // Nasconde lo shop
+        if (shopPanel != null)
+            shopPanel.SetActive(false);
+
+        // Disattiva tutti gli occhiali
+        foreach (GameObject g in glassesModels)
+        {
+            if (g != null)
+                g.SetActive(false);
+        }
+
+        // Attiva il modello selezionato
+        if (glassesIndex >= 0 && glassesIndex < glassesModels.Length && glassesModels[glassesIndex] != null)
+        {
+            glassesModels[glassesIndex].SetActive(true);
+        }
     }
 
-    void OnSearchChanged(string searchText)
+    public void BackToShop()
     {
-        searchText = searchText.Trim().ToLower();
+        // Mostra lo shop
+        if (shopPanel != null)
+            shopPanel.SetActive(true);
 
-        foreach (GameObject obj in productObjects)
+        // Nasconde il try-on
+        if (tryOnPanel != null)
+            tryOnPanel.SetActive(false);
+
+        // Disattiva tutti gli occhiali
+        foreach (GameObject g in glassesModels)
         {
-            obj.SetActive(false);
-        }
-
-        if (string.IsNullOrEmpty(searchText))
-        {
-            foreach (GameObject obj in productObjects)
-            {
-                obj.SetActive(true);
-                obj.transform.SetSiblingIndex(obj.transform.GetSiblingIndex());
-            }
-            return;
-        }
-
-        List<GameObject> matches = new List<GameObject>();
-
-        foreach (GameObject obj in productObjects)
-        {
-            Transform titleTransform = obj.transform.Find(obj.name + "Title");
-            if (titleTransform != null)
-            {
-                string titleText = titleTransform.GetComponent<Text>().text.ToLower();
-                if (titleText.Contains(searchText))
-                {
-                    matches.Add(obj);
-                }
-            }
-        }
-
-        int index = 0;
-        foreach (GameObject match in matches)
-        {
-            match.SetActive(true);
-            match.transform.SetSiblingIndex(index++);
-        }
-
-        foreach (GameObject obj in productObjects)
-        {
-            if (!matches.Contains(obj))
-            {
-                obj.SetActive(true);
-                obj.transform.SetSiblingIndex(index++);
-            }
+            if (g != null)
+                g.SetActive(false);
         }
     }
 }
