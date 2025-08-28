@@ -2664,9 +2664,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01bd14889393c4dbf9456432cb780705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  searchBar: {fileID: 0}
-  contentParent: {fileID: 440629686}
-  cartButton: {fileID: 683070660}
+  productPrefab: {fileID: 0}
+  contentPanel: {fileID: 0}
+  colorDropdown: {fileID: 708221763}
+  priceDropdown: {fileID: 1639128300}
   tryOnPanel: {fileID: 1457870188}
   shopPanel: {fileID: 634973108}
   glassesModels:
@@ -2675,19 +2676,6 @@ MonoBehaviour:
   - {fileID: 444454814}
   - {fileID: 728203816}
   - {fileID: 1054087401}
-  tryOnButtons:
-  - {fileID: 1466135988}
-  - {fileID: 1510333237}
-  - {fileID: 1864302981}
-  - {fileID: 543279122}
-  - {fileID: 877616594}
-  addToCartButtons:
-  - {fileID: 1779883940}
-  - {fileID: 1668743923}
-  - {fileID: 1335008504}
-  - {fileID: 190613232}
-  - {fileID: 180482729}
-  productObjects: []
   cartManager: {fileID: 535531641}
 --- !u!1 &257934911
 GameObject:
@@ -4660,7 +4648,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '  '
+  m_text: Low to high
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5208,7 +5196,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 579.35767}
   m_SizeDelta: {x: 1764, y: 1767.0002}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &444454814
@@ -5726,7 +5714,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1747013772}
   m_HandleRect: {fileID: 1747013771}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0.86427313
   m_Size: 0.30618864
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7566,8 +7554,8 @@ RectTransform:
   m_Children:
   - {fileID: 683070659}
   - {fileID: 1969574269}
-  - {fileID: 1639128299}
   - {fileID: 708221762}
+  - {fileID: 1639128299}
   - {fileID: 2118102179}
   - {fileID: 2092889945}
   - {fileID: 254450804}
@@ -8393,7 +8381,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '  '
+  m_text: All
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8855,24 +8843,33 @@ MonoBehaviour:
   m_MultiSelect: 0
   m_Options:
     m_Options:
-    - m_Text: '  '
+    - m_Text: All
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: '    Low to high'
+    - m_Text: Black
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: '    High to low'
+    - m_Text: Gold
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: "    Above 150,00 \u20AC"
-      m_Image: {fileID: 0}
-      m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: "    Below 150,00 \u20AC"
+    - m_Text: Bronze
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 254450805}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+        m_MethodName: ApplyCombinedFilter
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &708221764
 MonoBehaviour:
@@ -15228,7 +15225,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1744250846}
   m_HandleRect: {fileID: 1744250845}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0.6721236
   m_Size: 0.2783425
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -19346,24 +19343,33 @@ MonoBehaviour:
   m_MultiSelect: 0
   m_Options:
     m_Options:
-    - m_Text: '  '
+    - m_Text: Low to high
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: '    Low to high'
+    - m_Text: High to low
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: '    High to low'
+    - m_Text: "Above 110,00 \u20AC"
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: "    Above 150,00 \u20AC"
-      m_Image: {fileID: 0}
-      m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: "    Below 150,00 \u20AC"
+    - m_Text: "Below 110,00 \u20AC"
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 254450805}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+        m_MethodName: ApplyCombinedFilter
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &1639128301
 MonoBehaviour:
@@ -21983,7 +21989,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00017790706, y: 0.00012207031}
+  m_AnchoredPosition: {x: -0.00017790706, y: 201.41876}
   m_SizeDelta: {x: 0, y: 2138.9102}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1900799129

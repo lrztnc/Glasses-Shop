@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1B",
+    "name": "Classic Urban Black",
+    "description": "Sunglasses, classic style, black frame and green lenses.",
+    "price": 89,
+    "color": "Black",
+    "imageName": "black_sunglasses"
+  },
+  {
+    "id": "2B",
+    "name": "Bronze Street",
+    "description": "Stylish sunglasses with bronze tones.",
+    "price": 109,
+    "color": "Bronze",
+    "imageName": "bronze_sunglasses"
+  },
+  {
+    "id": "3B",
+    "name": "Glod Vintage Green",
+    "description": "Retro design with gold frames and olive lenses.",
+    "price": 119,
+    "color": "Gold",
+    "imageName": "gold_sunglasses"
+  },
+  {
+    "id": "4B",
+    "name": "Bronze Explorer",
+    "description": "High-durability sunglasses with bronze finish.",
+    "price": 129,
+    "color": "Bronze",
+    "imageName": "bronze_sunglasses_2"
+  },
+  {
+    "id": "5B",
+    "name": "Gold Aviator Premium",
+    "description": "Luxury aviator design with golden structure.",
+    "price": 139,
+    "color": "Gold",
+    "imageName": "gold_sunglasses_2"
+  }
+]
