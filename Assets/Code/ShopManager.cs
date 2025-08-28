@@ -1,158 +1,88 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections.Generic;
-
-[System.Serializable]
-public class Product
-{
-    public string id;
-    public string name;
-    public string description;
-    public float price;
-    public string color;
-    public string imageName;
-}
 
 public class ShopManager : MonoBehaviour
 {
-    [Header("Prefabs & UI")]
-    public GameObject productPrefab;
-    public Transform contentPanel;
-    public TMP_Dropdown colorDropdown;
-    public TMP_Dropdown priceDropdown;
+    [Header("Search & UI")]
+    public TMP_InputField searchBar;
+    public RectTransform contentParent;
+    public Button cartButton;
 
     [Header("Panels")]
     public GameObject tryOnPanel;
     public GameObject shopPanel;
 
-    [Header("3D Models")]
-    public GameObject[] glassesModels;
+    [Header("Product References")]
+    public GameObject[] glassesModels;     // Prefab occhiali nel TryOnPanel
+    public Button[] tryOnButtons;          // Bottoni "Try On"
+    public Button[] addToCartButtons;      // Bottoni "Add To Cart"
+    public GameObject[] productObjects;
 
-    [Header("Cart")]
-    public CartManager cartManager;
-
-    private List<GameObject> spawnedProducts = new List<GameObject>();
-    private List<Product> allProducts = new List<Product>();
+    [Header("Cart (facoltativo)")]
+    public CartManager cartManager;        // Se assegnato, mostra subito l'item quando il CartPanel è attivo
 
     void Start()
     {
-        LoadProductsFromJson();
+        // Nasconde TryOnPanel all'avvio
+        if (tryOnPanel != null)
+            tryOnPanel.SetActive(false);
 
-        // Assegna listener ai dropdown
-        if (colorDropdown != null)
-            colorDropdown.onValueChanged.AddListener(delegate { ApplyCombinedFilter(); });
-
-        if (priceDropdown != null)
-            priceDropdown.onValueChanged.AddListener(delegate { ApplyCombinedFilter(); });
-
-        ApplyCombinedFilter();
-    }
-
-    void LoadProductsFromJson()
-    {
-        TextAsset jsonFile = Resources.Load<TextAsset>("products");
-        if (jsonFile == null)
+        // Listener bottoni Try On
+        if (tryOnButtons != null)
         {
-            Debug.LogError("products.json non trovato in Resources!");
-            return;
-        }
-
-        Product[] products = JsonHelper.FromJson<Product>(jsonFile.text);
-        allProducts = new List<Product>(products);
-
-        // Pulisci i vecchi oggetti
-        foreach (Transform child in contentPanel)
-        {
-            Destroy(child.gameObject);
-        }
-        spawnedProducts.Clear();
-
-        for (int i = 0; i < allProducts.Count; i++)
-        {
-            Product p = allProducts[i];
-
-            GameObject item = Instantiate(productPrefab, contentPanel);
-            item.name = p.id;
-
-            // Testi
-            item.transform.Find("Title").GetComponent<TMP_Text>().text = p.name;
-            item.transform.Find("Description").GetComponent<TMP_Text>().text = p.description;
-            item.transform.Find("Price").GetComponent<TMP_Text>().text = p.price.ToString("F2") + " €";
-
-            // Immagine
-            Image img = item.transform.Find("Image").GetComponent<Image>();
-            Sprite sprite = Resources.Load<Sprite>(p.imageName);
-            if (sprite != null) img.sprite = sprite;
-
-            // Aggiunta alla lista prima di registrare l’indice
-            spawnedProducts.Add(item);
-            int correctIndex = spawnedProducts.Count - 1;
-
-            // Listener bottoni
-            item.transform.Find("TryOnButton").GetComponent<Button>().onClick.AddListener(() => OnTryOnButtonClick(correctIndex));
-            item.transform.Find("AddToCartButton").GetComponent<Button>().onClick.AddListener(() => OnAddToCart(correctIndex));
-        }
-    }
-
-    public void ApplyCombinedFilter()
-    {
-        if (colorDropdown == null || priceDropdown == null) return;
-
-        string selectedColor = colorDropdown.options[colorDropdown.value].text;
-        string selectedPrice = priceDropdown.options[priceDropdown.value].text;
-
-        List<(Product, GameObject)> filtered = new List<(Product, GameObject)>();
-
-        for (int i = 0; i < allProducts.Count; i++)
-        {
-            Product p = allProducts[i];
-            GameObject go = spawnedProducts[i];
-
-            bool colorMatch = (selectedColor == "All" || p.color == selectedColor);
-            bool priceMatch = selectedPrice switch
+            for (int i = 0; i < tryOnButtons.Length; i++)
             {
-                "Low to high" => true,
-                "High to low" => true,
-                "Above 110,00 €" => p.price > 110f,
-                "Below 110,00 €" => p.price <= 110f,
-                _ => true
-            };
-
-            go.SetActive(colorMatch && priceMatch);
-
-            if (go.activeSelf)
-                filtered.Add((p, go));
+                int index = i;
+                if (tryOnButtons[i] != null)
+                    tryOnButtons[i].onClick.AddListener(() => OnTryOnButtonClick(index));
+            }
         }
 
-        // Ordinamento
-        if (selectedPrice == "Low to high")
-            filtered.Sort((a, b) => a.Item1.price.CompareTo(b.Item1.price));
-        else if (selectedPrice == "High to low")
-            filtered.Sort((a, b) => b.Item1.price.CompareTo(a.Item1.price));
-
-        // Riordina visivamente nella scroll view
-        for (int i = 0; i < filtered.Count; i++)
+        // Listener bottoni Add To Cart
+        if (addToCartButtons != null)
         {
-            filtered[i].Item2.transform.SetSiblingIndex(i);
+            for (int i = 0; i < addToCartButtons.Length; i++)
+            {
+                int index = i;
+                if (addToCartButtons[i] != null)
+                    addToCartButtons[i].onClick.AddListener(() => OnAddToCart(index));
+            }
         }
     }
 
-    void OnTryOnButtonClick(int index)
+    private void OnAddToCart(int productIndex)
+    {
+        // 1) Salva lo stato centralmente
+        CartService.Add(productIndex);
+
+        // 2) Se il CartPanel è già attivo e c'è un CartManager assegnato, mostra subito l'item
+        if (cartManager != null && cartManager.isActiveAndEnabled)
+        {
+            cartManager.ShowItem(productIndex);
+        }
+
+        Debug.Log($"[ShopManager] Added product #{productIndex} to cart (saved in CartService).");
+    }
+
+    public void OnTryOnButtonClick(int glassesIndex)
     {
         if (tryOnPanel != null) tryOnPanel.SetActive(true);
         if (shopPanel != null) shopPanel.SetActive(false);
 
-        foreach (var g in glassesModels)
-            g.SetActive(false);
+        foreach (GameObject g in glassesModels)
+            if (g != null) g.SetActive(false);
 
-        if (index >= 0 && index < glassesModels.Length)
-            glassesModels[index].SetActive(true);
+        if (glassesIndex >= 0 && glassesIndex < glassesModels.Length && glassesModels[glassesIndex] != null)
+            glassesModels[glassesIndex].SetActive(true);
     }
 
-    void OnAddToCart(int index)
+    public void BackToShop()
     {
-        if (cartManager != null)
-            cartManager.ShowItem(index);
+        if (shopPanel != null) shopPanel.SetActive(true);
+        if (tryOnPanel != null) tryOnPanel.SetActive(false);
+
+        foreach (GameObject g in glassesModels)
+            if (g != null) g.SetActive(false);
     }
 }
