@@ -9,12 +9,18 @@ L'applicazione rappresenta un e-commerce per la vendita di occhiali, sviluppata 
 
 ## Classi principali ##
 **LoginManager.cs:** gestione e autenticazoine.
+
 **UIManager.cs:** controllo dei pannelli UI (Shop, cart, Try-On, Login, ...)
 **ShopManager.cs:** gestione del catalogo prodotti, pulsanti Add to Cart, e caricamento dinamico
+
 **CartManager.cs:** gestione del carrello (aggiunta, rimozione totale)
+
 **ProductUI.cs:** script per il prefab dei prodotti
+
 **ProductSearch.cs:** gestione della barra di ricerca e del suo filtraggio
+
 **GlassFollower.cs:** logica per 'agganciare' gli occhiali attraverso Face Detection
+
 **UserData.cs:** salvataggio delle informazione utente
 
 ## Prototipo Interfaccia ##
