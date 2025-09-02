@@ -29,7 +29,7 @@ L'applicazione rappresenta un e-commerce per la vendita di occhiali, sviluppata 
 **Cart panel:** lista dei prodotti scelti, pulsante per la rimozione, caricamento dei dati utente e del totale
 **TryOn panel:** webcam con 'l'agganciaento' degli occhiali al viso
 
-## Tecnologie usate ##
+## Tecnologie usate 
 - **Unity:** sviluppo della piattaforma
 - **JSON:** per il caricamento dinamico dei prodotti
 - **MediaPipe:** per il tracking del volto
