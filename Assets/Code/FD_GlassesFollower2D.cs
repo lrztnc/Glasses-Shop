@@ -25,11 +25,9 @@ public class FD_GlassesFollower2D : MonoBehaviour
         _screenRect = screen.rectTransform;
     }
 
-    // --- TUTTE LE FIRME CHE POTRESTI VEDERE NELL'INSPECTOR ---
     public void OnDetection(MP.Detection d)              { if (d!=null) OnDetections(new List<MP.Detection>{ d }); }
-    public void OnDetectionsList(List<MP.Detection> ds)  { OnDetections(ds); }     // per UnityEvent<List<>>
-    public void OnDetectionsIList(IList<MP.Detection> ds){ OnDetections(ds); }     // per eventi IList<>
-    // ----------------------------------------------------------
+    public void OnDetectionsList(List<MP.Detection> ds)  { OnDetections(ds); }     
+    public void OnDetectionsIList(IList<MP.Detection> ds){ OnDetections(ds); }     
 
     void OnDetections(IList<MP.Detection> dets)
     {
@@ -45,8 +43,8 @@ public class FD_GlassesFollower2D : MonoBehaviour
         Vector2? leftEye = null, rightEye = null;
 
         if (loc != null && loc.RelativeKeypoints != null && loc.RelativeKeypoints.Count >= 2) {
-            var kpR = loc.RelativeKeypoints[0]; // right eye
-            var kpL = loc.RelativeKeypoints[1]; // left eye
+            var kpR = loc.RelativeKeypoints[0]; 
+            var kpL = loc.RelativeKeypoints[1]; 
             rightEye = ToLocal(kpR.X, kpR.Y);
             leftEye  = ToLocal(kpL.X, kpL.Y);
         }

@@ -14,21 +14,18 @@ public class ShopManager : MonoBehaviour
     public GameObject shopPanel;
 
     [Header("Product References")]
-    public GameObject[] glassesModels;     // Prefab occhiali nel TryOnPanel
-    public Button[] tryOnButtons;          // Bottoni "Try On"
-    public Button[] addToCartButtons;      // Bottoni "Add To Cart"
+    public GameObject[] glassesModels;     
+    public Button[] tryOnButtons;          
+    public Button[] addToCartButtons;      
     public GameObject[] productObjects;
 
     [Header("Cart (facoltativo)")]
-    public CartManager cartManager;        // Se assegnato, mostra subito l'item quando il CartPanel è attivo
-
+    public CartManager cartManager;        
     void Start()
     {
-        // Nasconde TryOnPanel all'avvio
         if (tryOnPanel != null)
             tryOnPanel.SetActive(false);
 
-        // Listener bottoni Try On
         if (tryOnButtons != null)
         {
             for (int i = 0; i < tryOnButtons.Length; i++)
@@ -39,7 +36,6 @@ public class ShopManager : MonoBehaviour
             }
         }
 
-        // Listener bottoni Add To Cart
         if (addToCartButtons != null)
         {
             for (int i = 0; i < addToCartButtons.Length; i++)
@@ -53,10 +49,8 @@ public class ShopManager : MonoBehaviour
 
     private void OnAddToCart(int productIndex)
     {
-        // 1) Salva lo stato centralmente
         CartService.Add(productIndex);
 
-        // 2) Se il CartPanel è già attivo e c'è un CartManager assegnato, mostra subito l'item
         if (cartManager != null && cartManager.isActiveAndEnabled)
         {
             cartManager.ShowItem(productIndex);

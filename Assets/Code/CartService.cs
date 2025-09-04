@@ -1,6 +1,5 @@
 public static class CartService
 {
-    // 5 prodotti: mappa 0→1B, 1→2B, ... come nel tuo Inspector
     public static bool[] added = new bool[5];
 
     public static void Add(int index)

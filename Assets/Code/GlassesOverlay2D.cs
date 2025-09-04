@@ -4,21 +4,19 @@ using UnityEngine.UI;
 public class GlassesOverlay2D : MonoBehaviour
 {
     [Header("Refs")]
-    public RectTransform cameraRect;   // RectTransform del RawImage che mostra la camera
-    public RectTransform glassesRect;  // RectTransform della UI Image degli occhiali
-    public Image glassesImage;         // La UI Image
-    public Sprite[] models;            // Le 5 sprite degli occhiali
+    public RectTransform cameraRect;   
+    public RectTransform glassesRect;  
+    public Image glassesImage;         
+    public Sprite[] models;            
 
     [Header("Tuning")]
     [Tooltip("Quanto la larghezza degli occhiali rispetto alla distanza tra gli angoli esterni degli occhi")]
     public float widthMultiplier = 2.0f;
     [Tooltip("Offset verso l’alto (in multipli della distanza tra occhi)")]
     public float yOffset = 0.05f;
-    public bool mirrorX = true;        // se la camera frontale è specchiata
-    public bool clampToBounds = true;  // evita di uscire dal RawImage
-    public float smooth = 0.15f;       // smussa posizione/rotazione/scala
-
-    // stato interno smussato
+    public bool mirrorX = true;       
+    public bool clampToBounds = true;  
+    public float smooth = 0.15f;      
     Vector2 _pos; float _angle; float _w;
 
     public void SetVisible(bool v) => glassesImage.enabled = v;
@@ -32,7 +30,6 @@ public class GlassesOverlay2D : MonoBehaviour
         SetVisible(true);
     }
 
-    // CHIAVE: aggiorna da landmark normalizzati (0..1) degli angoli esterni occhi (MediaPipe: 33 = sx, 263 = dx)
     public void UpdateFromLandmarks(Vector2 leftEye01, Vector2 rightEye01)
     {
         if (!glassesImage || !glassesImage.sprite) return;
@@ -51,21 +48,17 @@ public class GlassesOverlay2D : MonoBehaviour
         float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
         float eyeDist = delta.magnitude;
 
-        // dimensioni in base allo sprite
         float targetWidth = eyeDist * widthMultiplier;
         float aspect = glassesImage.sprite.rect.height / glassesImage.sprite.rect.width;
         float targetHeight = targetWidth * aspect;
 
-        // offset verso l’alto (per centrare meglio il ponte)
         Vector2 up = new Vector2(-delta.y, delta.x).normalized;
         mid += up * (eyeDist * yOffset);
 
-        // smoothing
         _pos   = Vector2.Lerp(_pos, mid, 1 - Mathf.Exp(-Time.deltaTime / smooth));
         _angle = Mathf.LerpAngle(_angle, angle, 1 - Mathf.Exp(-Time.deltaTime / smooth));
         _w     = Mathf.Lerp(_w, targetWidth, 1 - Mathf.Exp(-Time.deltaTime / smooth));
 
-        // applica
         float h = _w * aspect;
         glassesRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _w);
         glassesRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,   h);
@@ -84,7 +77,6 @@ public class GlassesOverlay2D : MonoBehaviour
 
     Vector2 NormalizedToAnchored(Vector2 uv01)
     {
-        // converte coordinate normalizzate (0..1) del video nel sistema di ancoraggio del RawImage
         Vector2 size = cameraRect.rect.size;
         return (uv01 - new Vector2(0.5f, 0.5f)) * size;
     }

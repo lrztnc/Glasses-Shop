@@ -32,6 +32,6 @@ public class CartDetailsFiller : MonoBehaviour
             emailField.text = SessionManager.CurrentUser.Email;
 
         if (storeNumberField != null)
-            storeNumberField.text = "632"; // valore fisso
+            storeNumberField.text = "632"; 
     }
 }

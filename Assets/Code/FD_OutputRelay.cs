@@ -16,7 +16,6 @@ public class FD_OutputRelay : MonoBehaviour
     TrySub("OnDetectionsOutput");
     TrySub("OnOutput");
     TrySub("OnNext");
-    // single detection (alcune versioni)
     TrySubSingle("OnDetectionOutput");
   }
 

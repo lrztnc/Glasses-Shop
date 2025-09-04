@@ -20,13 +20,12 @@ public class ProductSearch : MonoBehaviour
     [Tooltip("Se attivo, la query deve contenere TUTTE le parole (AND). Se off, basta una parola (OR).")]
     public bool requireAllWords = true;
 
-    // Cache interna
     private readonly List<Entry> _entries = new List<Entry>();
 
     private class Entry
     {
         public GameObject itemGO;
-        public string titleNorm; // titolo normalizzato e in minuscolo
+        public string titleNorm;
     }
 
     void Awake()
@@ -35,14 +34,11 @@ public class ProductSearch : MonoBehaviour
 
         if (searchBar != null)
         {
-            // Filtraggio live mentre l'utente scrive
             searchBar.onValueChanged.AddListener(OnSearchChanged);
-            // All'avvio mostra tutto
             OnSearchChanged(searchBar.text);
         }
         else
         {
-            // Nessuna search bar -> mostra tutto
             ShowAll(true);
         }
     }
@@ -57,7 +53,6 @@ public class ProductSearch : MonoBehaviour
             var item = contentParent.GetChild(i).gameObject;
             if (item == null) continue;
 
-            // trova il TMP_Text del titolo cercando per nome (…Title)
             TMP_Text titleText = null;
             var texts = item.GetComponentsInChildren<TMP_Text>(true);
             foreach (var t in texts)
@@ -89,7 +84,6 @@ public class ProductSearch : MonoBehaviour
             return;
         }
 
-        // dividi la query in parole (spazi multipli ok)
         string[] words = q.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var e in _entries)
@@ -97,7 +91,6 @@ public class ProductSearch : MonoBehaviour
             bool match;
             if (requireAllWords)
             {
-                // AND: tutte le parole devono essere contenute nel titolo
                 match = true;
                 for (int i = 0; i < words.Length; i++)
                 {
@@ -110,7 +103,6 @@ public class ProductSearch : MonoBehaviour
             }
             else
             {
-                // OR: basta una parola
                 match = false;
                 for (int i = 0; i < words.Length; i++)
                 {
@@ -134,14 +126,12 @@ public class ProductSearch : MonoBehaviour
                 e.itemGO.SetActive(value);
     }
 
-    // Normalizza: lowercase, rimuove accenti/diacritici e spazi doppi
     private static string Normalize(string s)
     {
         if (string.IsNullOrEmpty(s)) return string.Empty;
 
         s = s.ToLowerInvariant().Trim();
 
-        // rimuove accenti (é -> e, ò -> o)
         string formD = s.Normalize(NormalizationForm.FormD);
         StringBuilder sb = new StringBuilder(formD.Length);
         foreach (char c in formD)
@@ -152,7 +142,6 @@ public class ProductSearch : MonoBehaviour
         }
         s = sb.ToString().Normalize(NormalizationForm.FormC);
 
-        // sostituisce sequenze di spazi con uno spazio singolo
         while (s.Contains("  ")) s = s.Replace("  ", " ");
 
         return s;

@@ -8,26 +8,24 @@ using UnityEngine.UI;
 public class CartManager : MonoBehaviour
 {
     [Header("UI - voci carrello (1B, 2B, 3B, 4B, 5B)")]
-    public GameObject[] cartItems;          // 1B..5B nella Scroll View
+    public GameObject[] cartItems;          
 
     [Header("Bottoni Remove (opzionali)")]
-    public Button[] removeButtons;          // stessi indici di cartItems
+    public Button[] removeButtons;          
 
     [Header("Prezzi (opzionale ma consigliato)")]
-    public float[] itemPrices;              // es. [89, 109, 119, 99, 129]
+    public float[] itemPrices;              
 
     [Header("Totale")]
-    public TMP_Text totalValueText;         // il nodo "Amount"
+    public TMP_Text totalValueText;         
 
     private readonly CultureInfo it = new CultureInfo("it-IT");
 
-    // gestione ricalcolo differito (per problemi di layout/TMP non ancora pronti)
     private bool recalcDirty = false;
     private Coroutine pendingCoroutine = null;
 
     void Awake()
     {
-        // Collega i pulsanti Remove
         if (removeButtons != null)
         {
             for (int i = 0; i < removeButtons.Length; i++)
@@ -36,8 +34,8 @@ public class CartManager : MonoBehaviour
                 if (removeButtons[i] != null)
                     removeButtons[i].onClick.AddListener(() =>
                     {
-                        HideItem(index);       // aggiorna visibilità
-                        CartService.Remove(index); // aggiorna stato centrale
+                        HideItem(index);       
+                        CartService.Remove(index); 
                         QueueRecalc();
                     });
             }
@@ -46,7 +44,6 @@ public class CartManager : MonoBehaviour
 
     void OnEnable()
     {
-        // Applica lo stato salvato (quando apri il pannello)
         ApplyStateFromService();
         QueueRecalc();
     }
@@ -83,7 +80,6 @@ public class CartManager : MonoBehaviour
         return cartItems != null && index >= 0 && index < cartItems.Length;
     }
 
-    // ---- ricalcolo differito / safe ----
     private void QueueRecalc()
     {
         recalcDirty = true;
@@ -117,7 +113,7 @@ public class CartManager : MonoBehaviour
             {
                 var go = cartItems[i];
                 if (go == null) continue;
-                if (go.activeInHierarchy)              // conta solo quelli visibili
+                if (go.activeInHierarchy)              
                     total += GetItemPrice(i, go);
             }
         }
@@ -126,7 +122,6 @@ public class CartManager : MonoBehaviour
             totalValueText.text = total.ToString("N2", it) + " €";
     }
 
-    // prezzo item: preferisci l'array itemPrices; se vuoto, prova a leggere il testo (es. "89,00 €")
     private float GetItemPrice(int index, GameObject itemGO)
     {
         if (itemPrices != null && index >= 0 && index < itemPrices.Length && itemPrices[index] > 0f)

@@ -28,19 +28,16 @@ public class LoginManager : MonoBehaviour
 
         List<UserData> users = LoadUsers();
 
-        // Cerchiamo l'utente che combacia
         UserData matchedUser = users.FirstOrDefault(
             u => u.Email == enteredEmail && u.Password == enteredPassword
         );
 
         if (matchedUser != null)
         {
-            // >>> SALVO LA SESSIONE <<<
             SessionManager.CurrentUser = matchedUser;
 
             Debug.Log("Login avvenuto con successo!");
 
-            // Apri lo shop
 #if UNITY_2023_1_OR_NEWER
             FindFirstObjectByType<UIManager>().ShowShop();
 #else
