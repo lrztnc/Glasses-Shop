@@ -8,19 +8,29 @@ using UnityEngine.UI;
 public class CartManager : MonoBehaviour
 {
     [Header("UI - voci carrello (1B, 2B, 3B, 4B, 5B)")]
-    public GameObject[] cartItems;          
+    public GameObject[] cartItems;
 
     [Header("Bottoni Remove (opzionali)")]
-    public Button[] removeButtons;          
+    public Button[] removeButtons;
 
     [Header("Prezzi (opzionale ma consigliato)")]
-    public float[] itemPrices;              
+    public float[] itemPrices;
 
     [Header("Totale")]
-    public TMP_Text totalValueText;         
+    public TMP_Text totalValueText;
+
+    [Header("Popups")]
+    [SerializeField] private GameObject cancelConfirmPopup;   
+    [SerializeField] private Button cancelYesButton;
+    [SerializeField] private Button cancelNoButton;
+
+    [SerializeField] private GameObject confirmOrderPopup;    
+    [SerializeField] private Button confirmYesButton;
+    [SerializeField] private Button confirmNoButton;
+
+    [SerializeField] private GameObject orderSentToast;           [SerializeField] private float toastDuration = 1.6f;
 
     private readonly CultureInfo it = new CultureInfo("it-IT");
-
     private bool recalcDirty = false;
     private Coroutine pendingCoroutine = null;
 
@@ -34,12 +44,31 @@ public class CartManager : MonoBehaviour
                 if (removeButtons[i] != null)
                     removeButtons[i].onClick.AddListener(() =>
                     {
-                        HideItem(index);       
-                        CartService.Remove(index); 
+                        HideItem(index);
+                        CartService.Remove(index);
                         QueueRecalc();
                     });
             }
         }
+    }
+
+    void Start()
+    {
+        if (cancelConfirmPopup) cancelConfirmPopup.SetActive(false);
+        if (confirmOrderPopup)  confirmOrderPopup.SetActive(false);
+        if (orderSentToast)     orderSentToast.SetActive(false);
+
+        if (cancelYesButton) cancelYesButton.onClick.AddListener(OnCancelYes);
+        if (cancelNoButton)  cancelNoButton.onClick.AddListener(() =>
+        {
+            if (cancelConfirmPopup) cancelConfirmPopup.SetActive(false);
+        });
+
+        if (confirmYesButton) confirmYesButton.onClick.AddListener(OnConfirmYes);
+        if (confirmNoButton)  confirmNoButton.onClick.AddListener(() =>
+        {
+            if (confirmOrderPopup) confirmOrderPopup.SetActive(false);
+        });
     }
 
     void OnEnable()
@@ -113,7 +142,7 @@ public class CartManager : MonoBehaviour
             {
                 var go = cartItems[i];
                 if (go == null) continue;
-                if (go.activeInHierarchy)              
+                if (go.activeInHierarchy)
                     total += GetItemPrice(i, go);
             }
         }
@@ -140,13 +169,68 @@ public class CartManager : MonoBehaviour
                 string norm = num.Replace(" ", "").Replace("\u00A0", "");
                 if (norm.Contains(",") && norm.Contains(".")) norm = norm.Replace(".", "");
 
-                if (float.TryParse(norm, System.Globalization.NumberStyles.AllowDecimalPoint, it, out float vIt))
+                if (float.TryParse(norm, NumberStyles.AllowDecimalPoint, it, out float vIt))
                     return vIt;
 
-                if (float.TryParse(norm.Replace(",", "."), System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out float vEn))
+                if (float.TryParse(norm.Replace(",", "."), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out float vEn))
                     return vEn;
             }
         }
         return 0f;
+    }
+
+
+    public void OnCancelOrderClicked()
+    {
+        if (cancelConfirmPopup) cancelConfirmPopup.SetActive(true);
+    }
+
+    public void OnConfirmOrderClicked()
+    {
+        if (confirmOrderPopup) confirmOrderPopup.SetActive(true);
+    }
+
+
+    private void OnCancelYes()
+    {
+        if (cancelConfirmPopup) cancelConfirmPopup.SetActive(false);
+        ClearCartAndZeroTotal();
+    }
+
+    private void OnConfirmYes()
+    {
+        if (confirmOrderPopup) confirmOrderPopup.SetActive(false);
+        ClearCartAndZeroTotal();
+
+        if (orderSentToast)
+            StartCoroutine(ShowToast(orderSentToast, toastDuration));
+    }
+
+
+    private void ClearCartAndZeroTotal()
+    {
+        if (cartItems != null)
+        {
+            for (int i = 0; i < cartItems.Length; i++)
+            {
+                if (cartItems[i] != null && cartItems[i].activeSelf)
+                {
+                    cartItems[i].SetActive(false);
+                    CartService.Remove(i);
+                }
+            }
+        }
+
+        if (totalValueText != null)
+            totalValueText.text = 0f.ToString("N2", it) + " €";
+
+        QueueRecalc();
+    }
+
+    private IEnumerator ShowToast(GameObject go, float seconds)
+    {
+        go.SetActive(true);
+        yield return new WaitForSeconds(seconds);
+        go.SetActive(false);
     }
 }
