@@ -39,3 +39,7 @@ L'applicazione rappresenta un e-commerce per la vendita di occhiali, sviluppata 
 - Aggangio degli occhiali al volto, con l'uso dei prefab immobili
 - Ricaricamento del totale: con la rimozione di alcuni prodotti il tolale o restava a '0,00€' oppure il calcolo era sbagliato
 - Accensione della webcam
+
+[GlassesShopUML.PDF](https://github.com/user-attachments/files/22189628/GlassesShopUML.PDF)
+
+  
